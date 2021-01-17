@@ -52,3 +52,6 @@ bot-vk: python3 vk_bot.py
 Комментарии:
 1. Если используются переменные окружения(токены, id и т.п.) то их нужно добавить на вкладке Settings приложения в блок Config Vars
 2. Для анализа логов требуется скачать и установить Heroku CLI
+
+## Пример работы
+![](https://github.com/LevikovCollector/bot_messages/blob/master/gif_for_github/chat_bot.gif)
