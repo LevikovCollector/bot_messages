@@ -4,6 +4,8 @@ import dialogflow_v2beta1
 import os
 import json
 from google.api_core.exceptions import InvalidArgument
+
+
 def train_clietn():
     client = dialogflow_v2beta1.AgentsClient()
     parent = client.project_path(os.environ['GOOGLE_PROJECT_NAME'])
@@ -11,12 +13,10 @@ def train_clietn():
 
 def create_new_intents(intents_questions):
     intents = []
-    for key in intents_questions.keys():
-        intent = {}
-        intent['display_name'] = key
-        intent['messages'] = [{'text':{'text': [intents_questions[key]['answer']]}}]
-        intent['training_phrases'] =  [{"parts":[{"text": question}]} for question in intents_questions[key]['questions']]
-        intents.append(intent)
+    for intent_name, intent_params in intents_questions.items():
+        intents.append({'display_name':intent_name,
+                        'messages':[{'text':{'text': [intent_params['answer']]}}],
+                        'training_phrases':[{"parts":[{"text": question}]} for question in intent_params['questions']]})
     return intents
 
 if __name__ == '__main__':

@@ -1,23 +1,13 @@
 from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
-import telegram
 from dotenv import load_dotenv
 from google.cloud import dialogflow
 import os
 import logging
 import time
+from logger_bot import BotLogsHandler
+
 
 bot_logger_telegram = logging.getLogger("bot_logger_telegram")
-
-class BotLogsHandler(logging.Handler):
-
-    def __init__(self):
-        logging.Handler.__init__(self)
-        self.bot =  telegram.Bot(token=os.environ['TELEGRAMM_LOGGER_BOT'])
-        self.chat_id = os.environ["TELEGRAM_CHAT_ID"]
-
-    def emit(self, record):
-        log_entry = self.format(record)
-        self.bot.send_message(chat_id=self.chat_id, text=log_entry)
 
 class SupportBot():
     def __init__(self):
@@ -28,7 +18,7 @@ class SupportBot():
 
         dispacher = updater.dispatcher
         dispacher.add_handler(CommandHandler("start", self.greet_user))
-        dispacher.add_handler(MessageHandler(Filters.text, self.echo))
+        dispacher.add_handler(MessageHandler(Filters.text, self.answer_to_user))
 
         updater.start_polling()
         updater.idle()
@@ -36,7 +26,7 @@ class SupportBot():
     def greet_user(self, update, context):
         update.message.reply_text('Здравствуйте!')
 
-    def echo(self, update, context):
+    def answer_to_user(self, update, context):
         text_input = dialogflow.TextInput(text=update.message.text, language_code='ru')
         query_input = dialogflow.QueryInput(text=text_input)
 
