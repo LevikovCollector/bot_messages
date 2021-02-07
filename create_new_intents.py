@@ -4,7 +4,7 @@ import dialogflow_v2beta1
 import os
 import json
 from google.api_core.exceptions import InvalidArgument
-
+from contextlib import suppress
 
 def train_clietn():
     client = dialogflow_v2beta1.AgentsClient()
@@ -27,10 +27,8 @@ if __name__ == '__main__':
     with open('questions.json', 'r', encoding='utf-8') as file_with_questions:
         intents_questions = json.load(file_with_questions)
         new_intents = create_new_intents(intents_questions)
-    try:
+    with suppress(InvalidArgument):
         for intent in new_intents:
-            response = client.create_intent(parent, intent)
-    except InvalidArgument:
-        pass
+           response = client.create_intent(parent, intent)
     train_clietn()
 

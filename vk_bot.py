@@ -13,20 +13,20 @@ bot_logger_vk = logging.getLogger("bot_logger_vk")
 
 class VK_Bot():
     def __init__(self):
-        session_id = f'vk-{random.randint(1, 1000)}'
         self.vk_session = VkApi(token=os.environ['VK_GROUP_TOKEN'])
         self.vk_api = self.vk_session.get_api()
         self.longpoll = VkLongPoll(self.vk_session)
-        self.session_client = dialogflow.SessionsClient()
-        self.session = self.session_client.session_path(os.environ['GOOGLE_PROJECT_NAME'],
-                                                        session_id)
+
 
     def answer_to_user(self, event):
         try:
+            session_client = dialogflow.SessionsClient()
+            session = session_client.session_path(os.environ['GOOGLE_PROJECT_NAME'],
+                                                            f'vk-{event.user_id}')
             text_input = dialogflow.TextInput(text=event.text, language_code='ru')
             query_input = dialogflow.QueryInput(text=text_input)
 
-            response = self.session_client.detect_intent(request={'session': self.session, 'query_input': query_input})
+            response = session_client.detect_intent(request={'session': session, 'query_input': query_input})
             if not response.query_result.intent.is_fallback:
                 self.vk_api.messages.send(
                     user_id=event.user_id,
