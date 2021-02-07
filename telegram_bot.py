@@ -11,8 +11,7 @@ bot_logger_telegram = logging.getLogger("bot_logger_telegram")
 
 class SupportBot():
     def __init__(self):
-        self.session_client = dialogflow.SessionsClient()
-        self.session = self.session_client.session_path(os.environ['GOOGLE_PROJECT_NAME'], os.environ['TELEGRAM_CHAT_ID'])
+
 
         updater = Updater(os.environ['TELEGRAM_BOT_TOKEN'])
 
@@ -27,10 +26,13 @@ class SupportBot():
         update.message.reply_text('Здравствуйте!')
 
     def answer_to_user(self, update, context):
+        session_client = dialogflow.SessionsClient()
+        session = session_client.session_path(os.environ['GOOGLE_PROJECT_NAME'],
+                                                        f'tg-{update.message.chat_id}')
         text_input = dialogflow.TextInput(text=update.message.text, language_code='ru')
         query_input = dialogflow.QueryInput(text=text_input)
 
-        response = self.session_client.detect_intent(request={'session': self.session, 'query_input': query_input})
+        response = session_client.detect_intent(request={'session': session, 'query_input': query_input})
         update.message.reply_text(response.query_result.fulfillment_text)
 
 
